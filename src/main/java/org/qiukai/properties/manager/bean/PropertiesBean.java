@@ -7,7 +7,6 @@ import java.util.*;
 
 public class PropertiesBean {
 
-
     private String name;
 
     private PropertiesBean parent;
@@ -51,6 +50,7 @@ public class PropertiesBean {
                 joiner.add(item.refresh(maps).toString());
             }
         }
+
         return joiner.toString();
     }
 
@@ -68,6 +68,7 @@ public class PropertiesBean {
                 }
             }
         });
+
         return result;
     }
 
@@ -83,13 +84,7 @@ public class PropertiesBean {
 
             result.maps.put(k, v);
         });
+
         return result;
-    }
-
-    public static void main(String[] args) {
-
-        PropertiesBean b = PropertiesBean.pathOf("D:/config.properties");
-        b.update("DatabaseDriver", "123");
-        System.out.println(b.toProperties());
     }
 }

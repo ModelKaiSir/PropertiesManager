@@ -12,14 +12,14 @@
          <left>
             <AnchorPane prefWidth="300.0" BorderPane.alignment="CENTER">
                <children>
-                  <TreeView fx:id="propertiesData" prefHeight="604.0" prefWidth="200.0" style="-fx-border-color: #339966;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <TreeView fx:id="propertiesData" layoutX="-14.0" prefHeight="604.0" prefWidth="200.0" style="-fx-border-color: #339966;" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0" />
                </children>
             </AnchorPane>
          </left>
          <center>
             <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <BorderPane prefHeight="604.0" prefWidth="713.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <BorderPane layoutX="-14.0" prefHeight="604.0" prefWidth="713.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0">
                      <top>
                         <HBox style="-fx-background-color: #CCCCCC;" BorderPane.alignment="CENTER">
                            <children>
@@ -44,13 +44,24 @@
                                     <HBox style="-fx-background-color: #CCCCCC;">
                                        <children>
                                           <Label text="项目路径：" />
-                                          <Text fx:id="resource" strokeType="OUTSIDE" strokeWidth="0.0" text="Empty" />
+                                          <Text fx:id="source" strokeType="OUTSIDE" strokeWidth="0.0" text="Empty" />
                                        </children>
                                     </HBox>
                                     <HBox style="-fx-background-color: #CCCCCC;">
                                        <children>
                                           <Label text="发布路径：" />
-                                          <Text fx:id="webResource" strokeType="OUTSIDE" strokeWidth="0.0" text="Empty" />
+                                          <Text fx:id="webSource" strokeType="OUTSIDE" strokeWidth="0.0" text="Empty" />
+                                       </children>
+                                    </HBox>
+                                    <HBox style="-fx-background-color: #CCCCCC;">
+                                       <children>
+                                          <Label text="项目地址：" />
+                                          <HBox HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Text fx:id="webPagePath" strokeType="OUTSIDE" strokeWidth="0.0" text="Empty" />
+                                             </children>
+                                          </HBox>
+                                          <Button fx:id="startMall" mnemonicParsing="false" onAction="#startMall" text="启动项目" />
                                        </children>
                                     </HBox>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #CCCCCC;" VBox.vgrow="ALWAYS">
@@ -60,12 +71,15 @@
                                     </AnchorPane>
                                  </children>
                                  <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    <Insets bottom="2.0" top="2.0" />
                                  </padding>
                               </VBox>
                            </children>
                         </AnchorPane>
                      </center>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
                   </BorderPane>
                </children>
             </AnchorPane>
