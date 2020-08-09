@@ -1,6 +1,8 @@
 package org.qiukai.properties.manager.controller;
 
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,11 +14,11 @@ import org.qiukai.properties.manager.core.properties.PropertiesManager;
 import org.qiukai.properties.manager.notify.Notify;
 import org.qiukai.properties.manager.root.AppMain;
 import org.qiukai.properties.manager.views.PropertiesView;
+import org.qiukai.properties.manager.views.UpdateView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.xml.crypto.Data;
 import java.net.URL;
 import java.util.*;
 
@@ -45,10 +47,6 @@ public class MainController implements Initializable {
     @FXML
     Button clone;
     @FXML
-    Button cloneByDataBase;
-    @FXML
-    Button cloneByDataBaseSqlServer;
-    @FXML
     Button update;
     @FXML
     Button remove;
@@ -57,7 +55,7 @@ public class MainController implements Initializable {
     PropertiesManager manager;
 
     @Autowired
-    DataBinder b;
+    DataBinder dataBinder;
 
     private TreeItem<String> rootTree = new TreeItem<>("Root");
 
@@ -114,6 +112,10 @@ public class MainController implements Initializable {
 
         propertiesData.getSelectionModel().selectedItemProperty().addListener((observable, o, n) -> {
 
+            if (null == n) {
+                return;
+            }
+
             if (rootTree == n.getParent()) {
                 manager.select(n.getValue());
             } else {
@@ -146,49 +148,115 @@ public class MainController implements Initializable {
         }
     }
 
+    private boolean checkRoot() {
+
+        //Confirm
+        TreeItem<String> item = propertiesData.getSelectionModel().getSelectedItem();
+
+        if (null == item || rootTree == item.getParent()) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkSelect() {
+
+        //Confirm
+        TreeItem<String> item = propertiesData.getSelectionModel().getSelectedItem();
+
+        if (null == item) {
+            return false;
+        }
+        return true;
+    }
+
     /**
-     *
      * 切换为选中的配置
+     *
      * @param event
      */
     @FXML
     void switched(ActionEvent event) {
 
-        manager.switched();
-        propertiesData.getSelectionModel().select(-1);
+        try {
+            manager.switched();
+            propertiesData.getSelectionModel().select(-1);
+            Notify.info("切换配置成功！");
+        } catch (NullPointerException | IllegalStateException e) {
+            Notify.info(e.getMessage());
+        }
     }
 
     @FXML
     void clone(ActionEvent event) {
 
+        if (!checkSelect()) {
+            return;
+        }
         //添加一个属性
+        dataBinder.register(PropertiesController.class, new DataBinding() {
+            @Override
+            public Property start() {
+                return showPropertiesArea.textProperty();
+            }
+
+            @Override
+            public void end(Property property) {
+
+                SimpleObjectProperty<AbstractMap.SimpleEntry<String, String>> p = (SimpleObjectProperty<AbstractMap.SimpleEntry<String, String>>) property;
+                manager.clone(p.get().getKey(), p.get().getValue());
+                //
+                propertiesData.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(p.get().getKey()));
+                Notify.info("操作成功！");
+
+            }
+        });
 
         AppMain.showView(PropertiesView.class, Modality.APPLICATION_MODAL);
-        //获取属性的值，已经过绑定
-        /*
-        String name = "";
-        HashMap<String, String> updateProperties = null;
+    }
 
-        changePropertiesItem(manager.clone(name, updateProperties));
-         */
+    @FXML
+    void update(ActionEvent event) {
+
+        if (!checkRoot()) {
+            return;
+        }
+        //添加一个属性
+        dataBinder.register(UpdateController.class, new DataBinding() {
+            @Override
+            public Property start() {
+                return showPropertiesArea.textProperty();
+            }
+
+            @Override
+            public void end(Property property) {
+
+                SimpleObjectProperty<AbstractMap.SimpleEntry<String, String>> p = (SimpleObjectProperty<AbstractMap.SimpleEntry<String, String>>) property;
+
+                TreeItem<String> item = propertiesData.getSelectionModel().getSelectedItem();
+                manager.update(item.getValue(), p.get().getValue());
+                //
+                Notify.info("修改成功！");
+            }
+        });
+
+        AppMain.showView(UpdateView.class, Modality.APPLICATION_MODAL);
     }
 
     @FXML
     void remove(ActionEvent event) {
 
         //Confirm
-        TreeItem<String> item = propertiesData.getSelectionModel().getSelectedItem();
-
-        if (null == item || rootTree == item.getParent()) {
+        if (!checkRoot()) {
             return;
         }
 
+        TreeItem<String> item = propertiesData.getSelectionModel().getSelectedItem();
         Optional<ButtonType> result = Notify.confirm("确定删除该配置吗？");
         if (result.isPresent() && result.get() == ButtonType.OK) {
 
             Notify.info("删除成功！");
-
-            manager.remove(item);
+            manager.remove();
             item.getParent().getChildren().remove(item);
         }
     }
@@ -198,5 +266,10 @@ public class MainController implements Initializable {
 
         Notify.info(webPagePath.getText());
         //启动cmd执行python命令 auto_login start --path=webPage
+    }
+
+    public void destroy() {
+
+        manager.destroy();
     }
 }

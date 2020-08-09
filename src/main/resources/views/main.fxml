@@ -29,7 +29,7 @@
                                     <Label fx:id="selectProperties" text="Empty" textFill="#dd5151" />
                                  </children>
                               </HBox>
-                              <Button mnemonicParsing="false" text="switch" />
+                              <Button mnemonicParsing="false" onAction="#switched" text="switch" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -94,9 +94,7 @@
                               <Insets top="4.0" />
                            </VBox.margin>
                         </Button>
-                        <Button fx:id="cloneByDataBase" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="clone_db" />
-                        <Button fx:id="cloneByDataBaseSqlServer" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="clone_db_ss" />
-                        <Button fx:id="update" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="update" />
+                        <Button fx:id="update" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#update" text="update" />
                         <Button fx:id="remove" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#remove" text="remove" />
                      </children>
                      <padding>

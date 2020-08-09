@@ -1,13 +1,16 @@
 package org.qiukai.properties.manager.bean;
 
+import com.google.common.base.Splitter;
 import org.qiukai.properties.manager.util.PropertiesReadWriteUtil;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.*;
 
-public class PropertiesBean {
+public class PropertiesBean implements Serializable {
 
     private String name;
+    private String parentName;
 
     private PropertiesBean parent;
     private List<PropertiesBean> child;
@@ -29,6 +32,14 @@ public class PropertiesBean {
 
     public PropertiesBean getParent() {
         return parent;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public String getParentName() {
+        return parentName;
     }
 
     @Override
@@ -72,11 +83,29 @@ public class PropertiesBean {
         return result;
     }
 
+    public static PropertiesBean valueOf(String lines) {
+
+        final PropertiesBean result = new PropertiesBean();
+        Splitter.on("\n").splitToList(lines).forEach(str -> {
+
+            if (!str.isEmpty()) {
+                PropertiesItem item = PropertiesItem.valueOf(str);
+                result.items.add(item);
+
+                if (item.isItem()) {
+                    result.maps.put(item.getKey(), item.getValue());
+                }
+            }
+        });
+        return result;
+    }
+
     public static PropertiesBean extendOf(PropertiesBean parent) {
 
         PropertiesBean result = new PropertiesBean();
 
         result.parent = parent;
+        result.parentName = parent.name;
         result.child.add(result);
 
         result.items.addAll(parent.items);

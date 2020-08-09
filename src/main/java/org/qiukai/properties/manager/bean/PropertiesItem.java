@@ -1,10 +1,12 @@
 package org.qiukai.properties.manager.bean;
 
+import com.google.common.base.Joiner;
 import org.springframework.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class PropertiesItem {
+public class PropertiesItem implements Serializable {
 
     private PropertiesType type;
     private String key;
@@ -34,17 +36,17 @@ public class PropertiesItem {
         this.value = value;
     }
 
-    public boolean isItem(){
+    public boolean isItem() {
         return type == PropertiesType.ITEM;
     }
 
-    public boolean isComment(){
+    public boolean isComment() {
         return type == PropertiesType.COMMENT;
     }
 
-    public PropertiesItem refresh(Map<String, String> maps){
+    public PropertiesItem refresh(Map<String, String> maps) {
 
-        if(maps.containsKey(this.key)){
+        if (maps.containsKey(this.key)) {
             this.value = maps.get(this.key);
         }
 
@@ -54,9 +56,9 @@ public class PropertiesItem {
     @Override
     public String toString() {
 
-        if(type == PropertiesType.ITEM){
+        if (type == PropertiesType.ITEM) {
             return String.format("%s=%s", key, value);
-        }else{
+        } else {
             return String.format("#%s", key);
         }
     }
@@ -89,8 +91,16 @@ public class PropertiesItem {
             } else {
 
                 String[] value = str.split("=");
-                if (value.length >= 2) {
+                if (value.length == 2) {
                     return PropertiesItem.itemOf(value[0], value[1]);
+                } else if (value.length > 2) {
+
+                    String values = "";
+                    for (int i = 1; i < value.length; i++) {
+                        values += "=" + value[i];
+                    }
+
+                    return PropertiesItem.itemOf(value[0], values);
                 }
             }
         }

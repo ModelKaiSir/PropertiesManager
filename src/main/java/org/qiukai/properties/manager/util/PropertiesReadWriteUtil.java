@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -46,6 +49,49 @@ public class PropertiesReadWriteUtil {
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    public static void save2Jdl(String filePath, Object data){
+
+        //
+        try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(filePath))){
+
+            output.writeObject(data);
+            output.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static <T> T read2Jdl(String filePath, Class<T> clazz){
+
+        //
+        File file = new File(filePath);
+
+        if(!file.exists()){
+            return null;
+        }
+
+        try(ObjectInputStream input = new ObjectInputStream(new FileInputStream(filePath))){
+
+            Object data = input.readObject();
+            if(null != data){
+
+                if(clazz.isAssignableFrom(data.getClass())){
+                    return (T) data;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static void main(String[] args) {
