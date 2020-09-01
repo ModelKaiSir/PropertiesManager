@@ -1,12 +1,15 @@
 package org.qiukai.properties.manager.bean;
 
 import com.google.common.base.Joiner;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Map;
 
 public class PropertiesItem implements Serializable {
+
+    static Joiner JOINER = Joiner.on("=");
 
     private PropertiesType type;
     private String key;
@@ -91,16 +94,20 @@ public class PropertiesItem implements Serializable {
             } else {
 
                 String[] value = str.split("=");
-                if (value.length == 2) {
+                if (value.length == 0) {
+
+                    return PropertiesItem.commentOf("");
+                } else if (value.length == 2) {
+
                     return PropertiesItem.itemOf(value[0], value[1]);
                 } else if (value.length > 2) {
 
-                    String values = "";
-                    for (int i = 1; i < value.length; i++) {
-                        values += "=" + value[i];
-                    }
+                    String key = value[0];
+                    value[0] = null;
+                    return PropertiesItem.itemOf(key, JOINER.skipNulls().join(value));
+                }else {
 
-                    return PropertiesItem.itemOf(value[0], values);
+                    return PropertiesItem.itemOf(value[0], "");
                 }
             }
         }

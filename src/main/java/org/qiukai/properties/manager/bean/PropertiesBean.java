@@ -77,6 +77,7 @@ public class PropertiesBean implements Serializable {
                 if (item.isItem()) {
                     result.maps.put(item.getKey(), item.getValue());
                 }
+
             }
         });
 
